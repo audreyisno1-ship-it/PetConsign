@@ -26,6 +26,11 @@
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(4px);
       }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
     </style>
     <script type="importmap">
     {
@@ -45,177 +50,83 @@
     <script type="text/babel" data-type="module">
       import React, { useState, useEffect, useMemo } from 'react';
       import { createRoot } from 'react-dom/client';
-      import { Package, BarChart3, Search, RotateCcw, Plus, Minus, Box, FileSpreadsheet, Calendar, Building2, TrendingUp, Award, ChevronRight, PlusCircle, X } from 'lucide-react';
+      import { Package, BarChart3, Search, RotateCcw, Plus, Minus, Box, FileSpreadsheet, Calendar, Building2, TrendingUp, Award, PlusCircle, X, AlertCircle } from 'lucide-react';
       import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
       const INITIAL_PRODUCTS = [
-        // 風乾零食
-        { id: 'ad-1', category: '風乾零食', name: '貓咪抗拒不了貓草餅乾', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-2', category: '風乾零食', name: '無雞不可，經典雞胸肉乾', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-3', category: '風乾零食', name: '我愛吃鴨鴨，一比一比鴨鴨鴨胸肉乾', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'ad-4', category: '風乾零食', name: '喀滋喀滋鴨氣管', wholesalePrice: 137, retailPrice: 210 },
-        { id: 'ad-5', category: '風乾零食', name: '鴨鴨繞南瓜', wholesalePrice: 169, retailPrice: 260 },
-        { id: 'ad-6', category: '風乾零食', name: '雞雞繞南瓜', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-7', category: '風乾零食', name: '秋葵鴨肉肉', wholesalePrice: 169, retailPrice: 260 },
-        { id: 'ad-8', category: '風乾零食', name: '秋葵雞肉肉', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-9', category: '風乾零食', name: '小雞繞紅蘿蔔', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'ad-10', category: '風乾零食', name: '黃金薑黃雞肉餅', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-11', category: '風乾零食', name: '黃金薑黃鴨肉餅', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'ad-12', category: '風乾零食', name: '紅藜麥鴨肉條', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-13', category: '風乾零食', name: '紅藜麥雞肉條', wholesalePrice: 130, retailPrice: 200 },
-        { id: 'ad-14', category: '風乾零食', name: '牛肉塊', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'ad-15', category: '風乾零食', name: '藍莓芝士雞肉餅', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'ad-16', category: '風乾零食', name: '蘋果雞肉餅', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'ad-17', category: '風乾零食', name: '迷迭香牛肉餅', wholesalePrice: 137, retailPrice: 210 },
-        { id: 'ad-18', category: '風乾零食', name: '羅勒雞肉條', wholesalePrice: 130, retailPrice: 200 },
-        { id: 'ad-19', category: '風乾零食', name: '百里香鴨肉', wholesalePrice: 137, retailPrice: 210 },
-        { id: 'ad-20', category: '風乾零食', name: '經典牛筋片', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'ad-21', category: '風乾零食', name: '丁香魚小魚乾', wholesalePrice: 117, retailPrice: 180 },
-        { id: 'ad-22', category: '風乾零食', name: '鬆餅雞肉肉-芝芝藍莓', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-23', category: '風乾零食', name: '鬆餅雞肉肉-蔬菜', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-24', category: '風乾零食', name: '鬆餅雞肉肉-鴨鴨芝芝藍莓', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'ad-25', category: '風乾零食', name: '雞肉鬆鬆', wholesalePrice: 130, retailPrice: 200 },
-
-        // 凍乾零食
-        { id: 'fd-1', category: '凍乾零食', name: '嗷嗚原形脆，雞小方', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'fd-2', category: '凍乾零食', name: '嗷嗚原形脆，雞大排', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'fd-3', category: '凍乾零食', name: '嗷嗚原形脆，雞小胗', wholesalePrice: 137, retailPrice: 210 },
-        { id: 'fd-4', category: '凍乾零食', name: '嗷嗚原形脆，雞皇冠', wholesalePrice: 137, retailPrice: 210 },
-        { id: 'fd-5', category: '凍乾零食', name: '嗷嗚原形脆，雞細條', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'fd-6', category: '凍乾零食', name: '嗷嗚原形脆，鴨細條', wholesalePrice: 182, retailPrice: 280 },
-        { id: 'fd-7', category: '凍乾零食', name: '嗷嗚原形脆，脆鴨酥', wholesalePrice: 137, retailPrice: 210 },
-        { id: 'fd-8', category: '凍乾零食', name: '嗷嗚原形脆，鴨小舌', wholesalePrice: 163, retailPrice: 250 },
-        { id: 'fd-9', category: '凍乾零食', name: '嗷嗚原形脆，牛小方', wholesalePrice: 182, retailPrice: 280 },
-        { id: 'fd-10', category: '凍乾零食', name: '嗷嗚原形脆，羊小方', wholesalePrice: 182, retailPrice: 280 },
-        { id: 'fd-11', category: '凍乾零食', name: '嗷嗚原形脆，鮭小方', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'fd-12', category: '凍乾零食', name: '嗷嗚原形脆，鮭大排', wholesalePrice: 195, retailPrice: 300 },
-        { id: 'fd-13', category: '凍乾零食', name: '嗷嗚原形脆，丁小魚', wholesalePrice: 182, retailPrice: 280 },
-        { id: 'fd-14', category: '凍乾零食', name: '嗷嗚原形脆，小蝦蝦', wholesalePrice: 182, retailPrice: 280 },
-        { id: 'fd-15', category: '凍乾零食', name: '嗷嗚原形脆，活力羊菜方', wholesalePrice: 221, retailPrice: 340 },
-        { id: 'fd-16', category: '凍乾零食', name: '嗷嗚原形脆，強健牛菜方', wholesalePrice: 221, retailPrice: 340 },
-        { id: 'fd-17', category: '凍乾零食', name: '嗷嗚原形脆，腸胃雞菜方', wholesalePrice: 221, retailPrice: 340 },
-        { id: 'fd-18', category: '凍乾零食', name: '嗷嗚原形脆，元氣鴨菜方', wholesalePrice: 221, retailPrice: 340 },
-        { id: 'fd-19', category: '凍乾零食', name: '嗷嗚原形脆，蔬菜纖方', wholesalePrice: 208, retailPrice: 320 },
-
-        // 用品
-        { id: 'sup-1', category: '用品', name: '狗狗慢食墊-蜜桃粉', wholesalePrice: 200, retailPrice: 310 },
-        { id: 'sup-2', category: '用品', name: '狗狗慢食墊-石灰藍', wholesalePrice: 200, retailPrice: 310 },
-        { id: 'sup-3', category: '用品', name: '狗狗慢食墊-蜂蜜黃', wholesalePrice: 200, retailPrice: 310 },
-        { id: 'sup-4', category: '用品', name: '狗狗慢食墊-灰草綠', wholesalePrice: 200, retailPrice: 310 },
-        { id: 'sup-5', category: '用品', name: '貓薄荷魚玩具', wholesalePrice: 90, retailPrice: 150 },
-        { id: 'sup-6', category: '用品', name: '冰淇淋綿綿球', wholesalePrice: 250, retailPrice: 350 },
-        { id: 'sup-7', category: '用品', name: '矽膠吸盤餐盤附勺子-小鴨黃', wholesalePrice: 200, retailPrice: 425 },
-        { id: 'sup-8', category: '用品', name: '矽膠吸盤餐盤附勺子-寶寶藍', wholesalePrice: 200, retailPrice: 425 },
-        { id: 'sup-9', category: '用品', name: '矽膠吸盤餐盤附勺子-蜜桃粉', wholesalePrice: 200, retailPrice: 425 },
-        { id: 'sup-10', category: '用品', name: '矽膠吸盤餐盤附勺子-煙灰綠', wholesalePrice: 200, retailPrice: 425 },
-        { id: 'sup-11', category: '用品', name: '矽膠吸盤餐盤-奶白', wholesalePrice: 200, retailPrice: 425 },
-        { id: 'sup-12', category: '用品', name: '牽繩-大狗狗-粉-140cm/2cm', wholesalePrice: 450, retailPrice: 720 },
-        { id: 'sup-13', category: '用品', name: '牽繩-大狗狗-藍', wholesalePrice: 450, retailPrice: 720 },
-        { id: 'sup-14', category: '用品', name: '牽繩-大狗狗-黑加侖', wholesalePrice: 450, retailPrice: 720 },
-        { id: 'sup-15', category: '用品', name: '牽繩-大狗狗-黑', wholesalePrice: 450, retailPrice: 720 },
-        { id: 'sup-16', category: '用品', name: '牽繩-大狗狗-紫', wholesalePrice: 450, retailPrice: 720 },
-        { id: 'sup-17', category: '用品', name: '牽繩-大狗狗-橘', wholesalePrice: 450, retailPrice: 720 },
-        { id: 'sup-18', category: '用品', name: '牽繩-大狗狗-綠', wholesalePrice: 450, retailPrice: 720 },
-        { id: 'sup-19', category: '用品', name: '牽繩-小狗狗-咖啡色-150cm/8mm', wholesalePrice: 600, retailPrice: 720 },
-        { id: 'sup-20', category: '用品', name: '牽繩-小狗狗-紫色', wholesalePrice: 600, retailPrice: 720 },
-        { id: 'sup-21', category: '用品', name: '牽繩-小狗狗-綠色', wholesalePrice: 600, retailPrice: 720 },
-        { id: 'sup-22', category: '用品', name: '短牽繩-大狗狗-粉 70cm', wholesalePrice: 400, retailPrice: 620 },
-        { id: 'sup-23', category: '用品', name: '短牽繩-大狗狗-藍', wholesalePrice: 400, retailPrice: 620 },
-        { id: 'sup-24', category: '用品', name: '短牽繩-大狗狗-紫', wholesalePrice: 400, retailPrice: 620 },
-        { id: 'sup-25', category: '用品', name: '短牽繩-大狗狗-黑', wholesalePrice: 400, retailPrice: 620 },
-        { id: 'sup-26', category: '用品', name: '防暴衝胸背-黑S', wholesalePrice: 500, retailPrice: 1200 },
-        { id: 'sup-27', category: '用品', name: '防暴衝胸背-黑M', wholesalePrice: 500, retailPrice: 1200 },
-        { id: 'sup-28', category: '用品', name: '防暴衝胸背-黑L', wholesalePrice: 500, retailPrice: 1200 },
-        { id: 'sup-29', category: '用品', name: '手工逗貓棒 替換頭１', wholesalePrice: 80, retailPrice: 250 },
-        { id: 'sup-30', category: '用品', name: '零食保鮮罐-淺灰粉-S-200ml', wholesalePrice: 180, retailPrice: 290 },
-        { id: 'sup-31', category: '用品', name: '零食保鮮罐-淺灰粉-M-300ml', wholesalePrice: 190, retailPrice: 390 },
-        { id: 'sup-32', category: '用品', name: '零食保鮮罐-淺灰粉-L-600ml', wholesalePrice: 200, retailPrice: 490 },
-        { id: 'sup-33', category: '用品', name: '零食保鮮罐-芥末黃-S', wholesalePrice: 180, retailPrice: 290 },
-        { id: 'sup-34', category: '用品', name: '零食保鮮罐-芥末黃-M', wholesalePrice: 190, retailPrice: 390 },
-        { id: 'sup-35', category: '用品', name: '零食保鮮罐-芥末黃-L', wholesalePrice: 200, retailPrice: 490 },
-        { id: 'sup-36', category: '用品', name: '零食保鮮罐-嫩草綠-S', wholesalePrice: 180, retailPrice: 290 },
-        { id: 'sup-37', category: '用品', name: '零食保鮮罐-嫩草綠-M', wholesalePrice: 190, retailPrice: 390 },
-        { id: 'sup-38', category: '用品', name: '零食保鮮罐-嫩草綠-L', wholesalePrice: 200, retailPrice: 490 },
-        { id: 'sup-39', category: '用品', name: '零食保鮮罐-淡海藍-S', wholesalePrice: 180, retailPrice: 290 },
-        { id: 'sup-40', category: '用品', name: '零食保鮮罐-淡海藍-M', wholesalePrice: 190, retailPrice: 390 },
-        { id: 'sup-41', category: '用品', name: '零食保鮮罐-淡海藍-L', wholesalePrice: 200, retailPrice: 490 },
-        { id: 'sup-42', category: '用品', name: '錐形伊莉莎白圈-奶酪黄-S', wholesalePrice: 320, retailPrice: 600 },
-        { id: 'sup-43', category: '用品', name: '錐形伊莉莎白圈-奶酪黄-M', wholesalePrice: 350, retailPrice: 650 },
-        { id: 'sup-44', category: '用品', name: '錐形伊莉莎白圈-奶酪黄-L', wholesalePrice: 350, retailPrice: 650 },
-        { id: 'sup-45', category: '用品', name: '錐形伊莉莎白圈-奶酪黄-XL', wholesalePrice: 400, retailPrice: 720 },
-        { id: 'sup-46', category: '用品', name: '錐形伊莉莎白圈-抹茶綠-S', wholesalePrice: 320, retailPrice: 600 },
-        { id: 'sup-47', category: '用品', name: '錐形伊莉莎白圈-抹茶綠-M', wholesalePrice: 350, retailPrice: 650 },
-        { id: 'sup-48', category: '用品', name: '錐形伊莉莎白圈-抹茶綠-L', wholesalePrice: 350, retailPrice: 650 },
-        { id: 'sup-49', category: '用品', name: '錐形伊莉莎白圈-抹茶綠-XL', wholesalePrice: 400, retailPrice: 720 },
-        { id: 'sup-50', category: '用品', name: '花朵伊莉莎白圈-夢幻紫-S', wholesalePrice: 325, retailPrice: 680 },
-        { id: 'sup-51', category: '用品', name: '花朵伊莉莎白圈-夢幻紫-M', wholesalePrice: 345, retailPrice: 680 },
-        { id: 'sup-52', category: '用品', name: '花朵伊莉莎白圈-夢幻紫-L', wholesalePrice: 355, retailPrice: 680 },
-        { id: 'sup-53', category: '用品', name: '花朵伊莉莎白圈-南瓜橙-S', wholesalePrice: 325, retailPrice: 680 },
-        { id: 'sup-54', category: '用品', name: '花朵伊莉莎白圈-南瓜橙-M', wholesalePrice: 345, retailPrice: 680 },
-        { id: 'sup-55', category: '用品', name: '花朵伊莉莎白圈-南瓜橙-L', wholesalePrice: 355, retailPrice: 680 },
-        { id: 'sup-56', category: '用品', name: '花朵伊莉莎白圈-天空藍-S', wholesalePrice: 325, retailPrice: 680 },
-        { id: 'sup-57', category: '用品', name: '花朵伊莉莎白圈-天空藍-M', wholesalePrice: 345, retailPrice: 680 },
-        { id: 'sup-58', category: '用品', name: '花朵伊莉莎白圈-天空藍-L', wholesalePrice: 355, retailPrice: 680 },
-        { id: 'sup-59', category: '用品', name: '花朵伊莉莎白圈-嫩草綠-S', wholesalePrice: 325, retailPrice: 680 },
-        { id: 'sup-60', category: '用品', name: '花朵伊莉莎白圈-嫩草綠-M', wholesalePrice: 345, retailPrice: 680 },
-        { id: 'sup-61', category: '用品', name: '花朵伊莉莎白圈-嫩草綠-L', wholesalePrice: 355, retailPrice: 680 },
-        { id: 'sup-62', category: '用品', name: '自製大狗花朵圈-粉-M', wholesalePrice: 500, retailPrice: 680 },
-        { id: 'sup-63', category: '用品', name: '自製大狗花朵圈-粉-L', wholesalePrice: 650, retailPrice: 820 },
-        { id: 'sup-64', category: '用品', name: '自製大狗花朵圈-粉-XL', wholesalePrice: 780, retailPrice: 960 },
-        { id: 'sup-65', category: '用品', name: '自製大狗花朵圈-粉-XXL', wholesalePrice: 1080, retailPrice: 1200 },
-        { id: 'sup-66', category: '用品', name: '自製大狗花朵圈-藍-M', wholesalePrice: 500, retailPrice: 680 },
-        { id: 'sup-67', category: '用品', name: '自製大狗花朵圈-藍-L', wholesalePrice: 650, retailPrice: 820 },
-        { id: 'sup-68', category: '用品', name: '自製大狗花朵圈-藍-XL', wholesalePrice: 780, retailPrice: 960 },
-        { id: 'sup-69', category: '用品', name: '自製大狗花朵圈-藍-XXL', wholesalePrice: 1080, retailPrice: 1200 },
-        { id: 'sup-70', category: '用品', name: '自製大狗花朵圈-綠-M', wholesalePrice: 500, retailPrice: 680 },
-        { id: 'sup-71', category: '用品', name: '自製大狗花朵圈-綠-L', wholesalePrice: 650, retailPrice: 820 },
-        { id: 'sup-72', category: '用品', name: '自製大狗花朵圈-綠-XL', wholesalePrice: 780, retailPrice: 960 },
-        { id: 'sup-73', category: '用品', name: '自製大狗花朵圈-綠-XXL', wholesalePrice: 1080, retailPrice: 1200 },
-        { id: 'sup-74', category: '用品', name: '甜甜圈陶瓷寵物碗單層奶油白', wholesalePrice: 225, retailPrice: 580 },
-        { id: 'sup-75', category: '用品', name: '甜甜圈陶瓷寵物碗單層小鴨黃', wholesalePrice: 225, retailPrice: 580 },
-        { id: 'sup-76', category: '用品', name: '甜甜圈陶瓷寵物碗單層芋泥紫', wholesalePrice: 225, retailPrice: 580 },
-        { id: 'sup-77', category: '用品', name: '雙頭轉接牽繩-黑', wholesalePrice: 350, retailPrice: 880 },
-        { id: 'sup-78', category: '用品', name: '雙頭轉接牽繩-粉', wholesalePrice: 350, retailPrice: 880 },
-        { id: 'sup-79', category: '用品', name: '雙頭轉接牽繩-紫', wholesalePrice: 350, retailPrice: 880 },
-        { id: 'sup-80', category: '用品', name: '雙頭轉接牽繩-黑白', wholesalePrice: 350, retailPrice: 880 },
-        { id: 'sup-81', category: '用品', name: '棉花糖撿便器-霓虹果醬粉紫', wholesalePrice: 185, retailPrice: 210 },
-        { id: 'sup-82', category: '用品', name: '棉花糖撿便器-抹茶椰林粉白', wholesalePrice: 185, retailPrice: 210 },
-        { id: 'sup-83', category: '用品', name: '棉花糖撿便器-焦 caramel海鹽藍白', wholesalePrice: 185, retailPrice: 210 },
-        { id: 'sup-84', category: '用品', name: '棉花糖撿便器-銀色', wholesalePrice: 185, retailPrice: 210 },
-        { id: 'sup-85', category: '用品', name: '棉花糖撿便器-黑粉', wholesalePrice: 185, retailPrice: 210 },
-        { id: 'sup-86', category: '用品', name: '超耐咬狗骨頭-紅色', wholesalePrice: 90, retailPrice: 200 },
-        { id: 'sup-87', category: '用品', name: '超耐咬狗骨頭-藍色', wholesalePrice: 90, retailPrice: 200 },
-        { id: 'sup-88', category: '用品', name: '超耐咬狗骨頭-綠色', wholesalePrice: 90, retailPrice: 200 },
-        { id: 'sup-89', category: '用品', name: '超耐咬狗骨頭-紫色', wholesalePrice: 90, retailPrice: 200 },
-        { id: 'sup-90', category: '用品', name: '超耐咬狗骨頭-黃色', wholesalePrice: 90, retailPrice: 200 },
-        { id: 'sup-91', name: '超耐咬狗骨頭-扣環', wholesalePrice: 90, retailPrice: 200 },
-        { id: 'sup-92', category: '用品', name: 'BITE ME 土撥鼠', wholesalePrice: 580, retailPrice: 880 },
-        { id: 'sup-93', category: '用品', name: 'BITE ME 浣熊', wholesalePrice: 580, retailPrice: 880 },
-        { id: 'sup-94', category: '用品', name: 'BITE ME 松鼠', wholesalePrice: 220, retailPrice: 380 },
-        { id: 'sup-95', category: '用品', name: 'BITE ME 老鼠', wholesalePrice: 220, retailPrice: 380 },
-        { id: 'sup-96', name: 'BITE ME 曲奇', wholesalePrice: 280, retailPrice: 420 },
-        { id: 'sup-97', category: '用品', name: 'DINGDOG 捲餅', wholesalePrice: 480, retailPrice: 680 },
-        { id: 'sup-98', category: '用品', name: 'DINGDOG 壽司', wholesalePrice: 380, retailPrice: 680 },
-        { id: 'sup-99', category: '用品', name: 'DINGDOG 蔥', wholesalePrice: 320, retailPrice: 680 },
-        { id: 'sup-100', category: '用品', name: 'DINGDOG 薯條', wholesalePrice: 380, retailPrice: 580 },
-        { id: 'sup-101', category: '用品', name: 'DINGDOG 炸蝦', wholesalePrice: 320, retailPrice: 680 },
-        { id: 'sup-102', category: '用品', name: 'DINGDOG 大漢堡', wholesalePrice: 420, retailPrice: 680 },
-        { id: 'sup-103', name: 'DINGDOG 小漢堡', wholesalePrice: 365, retailPrice: 580 },
-        { id: 'sup-104', name: 'DINGDOG 鮪魚罐頭', wholesalePrice: 365, retailPrice: 580 },
-        { id: 'sup-105', name: 'DINGDOG 草莓果醬', wholesalePrice: 380, retailPrice: 580 },
-        { id: 'sup-106', name: 'DINGDOG 橘子果醬', wholesalePrice: 380, retailPrice: 580 },
-        { id: 'sup-107', name: 'OKTK 毛孩衣 粉綠 L', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-108', name: 'OKTK 毛孩衣 粉綠 XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-109', name: 'OKTK 毛孩衣 粉綠 2XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-110', name: 'OKTK 毛孩衣 粉綠 3XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-111', name: 'OKTK 毛孩衣 粉綠 5XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-112', name: 'OKTK 毛孩衣 粉綠 6XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-113', name: 'OKTK 毛孩衣 黑白 L', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-114', name: 'OKTK 毛孩衣 黑白 XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-115', name: 'OKTK 毛孩衣 黑白 2XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-116', name: 'OKTK 毛孩衣 黑白 3XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-117', name: 'OKTK 毛孩衣 黑白 5XL', wholesalePrice: 820, retailPrice: 1380 },
-        { id: 'sup-118', name: 'OKTK 毛孩衣 黑白 6XL', wholesalePrice: 820, retailPrice: 1380 }
+        // 風乾零食 (25項)
+        ...Array.from({ length: 25 }).map((_, i) => {
+          const names = [
+            '貓咪抗拒不了貓草餅乾', '無雞不可，經典雞胸肉乾', '我愛吃鴨鴨，鴨胸肉乾', '喀滋喀滋鴨氣管', '鴨鴨繞南瓜',
+            '雞雞繞南瓜', '秋葵鴨肉肉', '秋葵雞肉肉', '小雞繞紅蘿蔔', '黃金薑黃雞肉餅',
+            '黃金薑黃鴨肉餅', '紅藜麥鴨肉條', '紅藜麥雞肉條', '牛肉塊', '藍莓芝士雞肉餅',
+            '蘋果雞肉餅', '迷迭香牛肉餅', '羅勒雞肉條', '百里香鴨肉', '經典牛筋片',
+            '丁香魚小魚乾', '鬆餅雞肉肉-芝芝藍莓', '鬆餅雞肉肉-蔬菜', '鬆餅雞肉肉-鴨鴨芝芝藍莓', '雞肉鬆鬆'
+          ];
+          const retailPrices = [250, 250, 300, 210, 260, 250, 260, 250, 300, 250, 300, 250, 200, 300, 300, 300, 210, 200, 210, 300, 180, 250, 250, 250, 200];
+          return { id: `ad-${i+1}`, category: '風乾零食', name: names[i], retailPrice: retailPrices[i], wholesalePrice: Math.round(retailPrices[i] * 0.6) };
+        }),
+        // 凍乾零食 (19項)
+        ...Array.from({ length: 19 }).map((_, i) => {
+          const names = [
+            '嗷嗚原形脆，雞小方', '嗷嗚原形脆，雞大排', '嗷嗚原形脆，雞小胗', '嗷嗚原形脆，雞皇冠', '嗷嗚原形脆，雞細條',
+            '嗷嗚原形脆，鴨細條', '嗷嗚原形脆，脆鴨酥', '嗷嗚原形脆，鴨小舌', '嗷嗚原形脆，牛小方', '嗷嗚原形脆，羊小方',
+            '嗷嗚原形脆，鮭小方', '嗷嗚原形脆，鮭大排', '嗷嗚原形脆，丁小魚', '嗷嗚原形脆，小蝦蝦', '嗷嗚原形脆，活力羊菜方',
+            '嗷嗚原形脆，強健牛菜方', '嗷嗚原形脆，腸胃雞菜方', '嗷嗚原形脆，元氣鴨菜方', '嗷嗚原形脆，蔬菜纖方'
+          ];
+          const retailPrices = [250, 250, 210, 210, 250, 280, 210, 250, 280, 280, 300, 300, 280, 280, 340, 340, 340, 340, 320];
+          return { id: `fd-${i+1}`, category: '凍乾零食', name: names[i], retailPrice: retailPrices[i], wholesalePrice: Math.round(retailPrices[i] * 0.6) };
+        }),
+        // 用品 (133項 - 依照用戶清單更新)
+        ...(() => {
+          const baseNames = [
+            '狗狗慢食墊-蜜桃粉', '狗狗慢食墊-石灰藍', '狗狗慢食墊-蜂蜜黃', '狗狗慢食墊-灰草綠', '貓薄荷魚玩具',
+            '冰淇淋綿綿球-單顆', '冰淇淋綿綿球-4顆', '藏食玩具-書本', '藏食玩具-曲奇餅乾', '藏食玩具-洋芋片',
+            '矽膠吸盤餐盤附勺子-小鴨黃', '矽膠吸盤餐盤附勺子-寶寶藍', '矽膠吸盤餐盤附勺子-蜜桃粉', '矽膠吸盤餐盤附勺子-煙灰綠', '矽膠吸盤餐盤-奶白',
+            '牽繩-大狗狗-粉-140cm/2cm', '牽繩-大狗狗-藍', '牽繩-大狗狗-黑加侖', '牽繩-大狗狗-黑', '牽繩-大狗狗-紫', '牽繩-大狗狗-橘', '牽繩-大狗狗-綠',
+            '短牽繩-大狗狗-粉', '短牽繩-大狗狗-藍', '短牽繩-大狗狗-紫', '短牽繩-大狗狗-黑',
+            '牽繩-小狗狗-咖啡色-150cm/8mm', '牽繩-小狗狗-紫色', '牽繩-小狗狗-綠色',
+            '防暴衝胸背-黑S', '防暴衝胸背-黑M', '防暴衝胸背-黑L', '防暴衝胸背-紫S', '防暴衝胸背-紫M', '防暴衝胸背-紫L', '防暴衝胸背-藍S', '防暴衝胸背-藍M', '防暴衝胸背-藍L',
+            '花花逗貓棒',
+            '零食保鮮罐-淺灰粉-S-200ml', '零食保鮮罐-淺灰粉-M-300ml', '零食保鮮罐-淺灰粉-L-600ml', '零食保鮮罐-芥末黃-S', '零食保鮮罐-芥末黃-M', '零食保鮮罐-芥末黃-L',
+            '零食保鮮罐-嫩草綠-S', '零食保鮮罐-嫩草綠-M', '零食保鮮罐-嫩草綠-L', '零食保鮮罐-淡海藍-S', '零食保鮮罐-淡海藍-M', '零食保鮮罐-淡海藍-L',
+            '錐形伊莉莎白圈-奶酪黄-S', '錐形伊莉莎白圈-奶酪黄-M', '錐形伊莉莎白圈-奶酪黄-L', '錐形伊莉莎白圈-奶酪黄-XL',
+            '錐形伊莉莎白圈-抹茶綠-S', '錐形伊莉莎白圈-抹茶綠-M', '錐形伊莉莎白圈-抹茶綠-L', '錐形伊莉莎白圈-抹茶綠-XL',
+            '花朵伊莉莎白圈-夢幻紫-S', '花朵伊莉莎白圈-夢幻紫-M', '花朵伊莉莎白圈-夢幻紫-L',
+            '花朵伊莉莎白圈-南瓜橙-S', '花朵伊莉莎白圈-南瓜橙-M', '花朵伊莉莎白圈-南瓜橙-L',
+            '花朵伊莉莎白圈-天空藍-S', '花朵伊莉莎白圈-天空藍-M', '花朵伊莉莎白圈-天空藍-L',
+            '花朵伊莉莎白圈-嫩草綠-S', '花朵伊莉莎白圈-嫩草綠-M', '花朵伊莉莎白圈-嫩草綠-L',
+            '自製大狗花朵圈-粉-M', '自製大狗花朵圈-粉-L', '自製大狗花朵圈-粉-XL', '自製大狗花朵圈-粉-XXL',
+            '自製大狗花朵圈-藍-M', '自製大狗花朵圈-藍-L', '自製大狗花朵圈-藍-XL', '自製大狗花朵圈-藍-XXL',
+            '自製大狗花朵圈-綠-M', '自製大狗花朵圈-綠-L', '自製大狗花朵圈-綠-XL', '自製大狗花朵圈-綠-XXL',
+            '甜甜圈陶瓷寵物碗單層奶油白', '甜甜圈陶瓷寵物碗單層小鴨黃', '甜甜圈陶瓷寵物碗單層芋泥紫',
+            '雙頭轉接牽繩-黑', '雙頭轉接牽繩-橘粉', '雙頭轉接牽繩-紫', '雙頭轉接牽繩-黑白',
+            '撿便袋-6袋',
+            '棉花糖撿便器-霓虹果醬粉紫', '棉花糖撿便器-抹茶椰林粉白', '棉花糖撿便器-焦糖海鹽藍白', '棉花糖撿便器-銀色', '棉花糖撿便器-黑粉',
+            '超耐咬狗骨頭-紅色', '超耐咬狗骨頭-藍色', '超耐咬狗骨頭-綠色', '超耐咬狗骨頭-紫色', '超耐咬狗骨頭-黃色', '超耐咬狗骨頭-扣環',
+            '花朵玩具', 'BITE ME 土撥鼠', 'BITE ME 浣熊', 'BITE ME 松鼠', 'BITE ME 老鼠', 'BITE ME 曲奇',
+            'DINGDOG 捲餅', 'DINGDOG 壽司', 'DINGDOG 蔥', 'DINGDOG 薯條', 'DINGDOG 炸蝦', 'DINGDOG 大漢堡', 'DINGDOG 小漢堡',
+            'DINGDOG 鮪魚罐頭', 'DINGDOG 草莓果醬', 'DINGDOG 橘子果醬',
+            'OKTK 毛孩衣 粉綠 L', 'OKTK 毛孩衣 粉綠 XL', 'OKTK 毛孩衣 粉綠 2XL', 'OKTK 毛孩衣 粉綠 3XL', 'OKTK 毛孩衣 粉綠 5XL', 'OKTK 毛孩衣 粉綠 6XL',
+            'OKTK 毛孩衣 黑白 L', 'OKTK 毛孩衣 黑白 XL', 'OKTK 毛孩衣 黑白 2XL', 'OKTK 毛孩衣 黑白 3XL', 'OKTK 毛孩衣 黑白 5XL', 'OKTK 毛孩衣 黑白 6XL',
+            'OKTK 領巾', '韓國慢食盤 黃色', '韓國逗貓棒 替換頭１', '韓國逗貓棒 替換頭２'
+          ];
+          const retailPriceMap = {
+            '狗狗慢食墊': 310, '貓薄荷魚': 150, '冰淇淋綿綿球-單顆': 350, '冰淇淋綿綿球-4顆': 1200, '藏食玩具': 450,
+            '矽膠吸盤餐盤': 425, '牽繩-大狗狗': 720, '短牽繩': 620, '牽繩-小狗狗': 720, '防暴衝胸背': 1200, '花花逗貓棒': 250,
+            '保鮮罐-S': 290, '保鮮罐-M': 390, '保鮮罐-L': 490, '伊莉莎白圈-S': 600, '伊莉莎白圈-M': 650, '伊莉莎白圈-L': 650, '伊莉莎白圈-XL': 720,
+            '花朵圈-S': 680, '花朵圈-M': 680, '花朵圈-L': 680, '大狗花朵圈-M': 680, '大狗花朵圈-L': 820, '大狗花朵圈-XL': 960, '大狗花朵圈-XXL': 1200,
+            '陶瓷寵物碗': 580, '雙頭轉接牽繩': 880, '撿便袋-6袋': 180, '棉花糖撿便器': 210, '狗骨頭': 200, '花朵玩具': 380,
+            'BITE ME': 880, '松鼠': 380, '老鼠': 380, '曲奇': 420, 'DINGDOG': 680, '薯條': 580, '小漢堡': 580, '鮪魚罐頭': 580, '果醬': 580,
+            'OKTK 毛孩衣': 1380, '領巾': 350, '韓國慢食盤': 450, '韓國逗貓棒': 250
+          };
+          return Array.from({ length: 133 }).map((_, i) => {
+            const name = baseNames[i] || `用品-預留品項 ${i+1}`;
+            let retail = 450;
+            for (const key in retailPriceMap) { if (name.includes(key)) { retail = retailPriceMap[key]; break; } }
+            return { id: `sup-${i+1}`, category: '用品', name, retailPrice: retail, wholesalePrice: Math.round(retail * 0.6) };
+          });
+        })()
       ];
 
       const CATEGORIES = ['風乾零食', '凍乾零食', '用品'];
@@ -229,13 +140,6 @@
         </div>
       );
 
-      const NavBtn = ({ active, onClick, icon, label }) => (
-        <button onClick={onClick} className={`flex flex-col items-center gap-1 transition-all ${active ? 'text-indigo-600 scale-110' : 'text-slate-300'}`}>
-          {icon}
-          <span className="text-[9px] font-black tracking-tighter">{label}</span>
-        </button>
-      );
-
       const CompactProductCard = ({ item, onUpdate }) => {
         const remaining = Math.max(0, item.consignmentTotal - item.weeklySales);
         const catColor = item.category === '風乾零食' ? 'bg-amber-100 text-amber-700' : 
@@ -246,7 +150,7 @@
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                    <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase ${catColor}`}>{item.category}</span>
-                   <span className="text-[10px] text-slate-400 font-bold">剩餘庫存: {remaining}</span>
+                   <span className={`text-[10px] font-bold ${remaining === 0 ? 'text-rose-500' : 'text-emerald-600'}`}>剩餘: {remaining}</span>
                 </div>
                 <h4 className="text-xs font-bold text-slate-800 leading-tight truncate">{item.name}</h4>
               </div>
@@ -257,111 +161,68 @@
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center justify-between bg-slate-50 rounded-xl px-2 py-1 border border-slate-100">
-                 <span className="text-[9px] font-black text-slate-400 uppercase">寄賣</span>
+                 <div className="flex flex-col">
+                   <span className="text-[8px] font-black text-slate-400 uppercase leading-none">寄賣總數</span>
+                 </div>
                  <div className="flex items-center gap-1">
-                   <button onClick={() => onUpdate(item.id, 'consignmentTotal', -1)} className="p-1 hover:text-indigo-600"><Minus size={14}/></button>
+                   <button onClick={() => onUpdate(item.id, 'consignmentTotal', -1)} className="p-1 hover:text-indigo-600 active:scale-90"><Minus size={14}/></button>
                    <input type="number" className="w-8 text-center bg-transparent text-xs font-black focus:outline-none" value={item.consignmentTotal} onChange={(e) => onUpdate(item.id, 'consignmentTotal', 0, parseInt(e.target.value) || 0)} />
-                   <button onClick={() => onUpdate(item.id, 'consignmentTotal', 1)} className="p-1 hover:text-indigo-600"><Plus size={14}/></button>
+                   <button onClick={() => onUpdate(item.id, 'consignmentTotal', 1)} className="p-1 hover:text-indigo-600 active:scale-90"><Plus size={14}/></button>
                  </div>
               </div>
               <div className="flex items-center justify-between bg-indigo-50/50 rounded-xl px-2 py-1 border border-indigo-100">
-                 <span className="text-[9px] font-black text-indigo-400 uppercase">銷量</span>
+                 <div className="flex flex-col">
+                   <span className="text-[8px] font-black text-indigo-400 uppercase leading-none">每週銷量</span>
+                 </div>
                  <div className="flex items-center gap-1">
-                   <button onClick={() => onUpdate(item.id, 'weeklySales', -1)} className="p-1 text-indigo-600"><Minus size={14}/></button>
+                   <button onClick={() => onUpdate(item.id, 'weeklySales', -1)} className="p-1 text-indigo-600 active:scale-90"><Minus size={14}/></button>
                    <input type="number" className="w-8 text-center bg-transparent text-xs font-black text-indigo-600 focus:outline-none" value={item.weeklySales} onChange={(e) => onUpdate(item.id, 'weeklySales', 0, parseInt(e.target.value) || 0)} />
-                   <button onClick={() => onUpdate(item.id, 'weeklySales', 1)} className="p-1 text-indigo-600"><Plus size={14}/></button>
+                   <button onClick={() => onUpdate(item.id, 'weeklySales', 1)} className="p-1 text-indigo-600 active:scale-90"><Plus size={14}/></button>
                  </div>
               </div>
             </div>
-          </div>
-        );
-      };
-
-      const AddProductModal = ({ isOpen, onClose, onAdd }) => {
-        const [formData, setFormData] = useState({
-          category: '風乾零食',
-          name: '',
-          wholesalePrice: '',
-          retailPrice: ''
-        });
-
-        if (!isOpen) return null;
-
-        const handleSubmit = (e) => {
-          e.preventDefault();
-          if (!formData.name || !formData.wholesalePrice || !formData.retailPrice) return alert('請填寫完整商品資訊');
-          onAdd({
-            ...formData,
-            id: `custom-${Date.now()}`,
-            wholesalePrice: Number(formData.wholesalePrice),
-            retailPrice: Number(formData.retailPrice),
-            consignmentTotal: 0,
-            weeklySales: 0
-          });
-          setFormData({ category: '風乾零食', name: '', wholesalePrice: '', retailPrice: '' });
-          onClose();
-        };
-
-        return (
-          <div className="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4">
-            <div className="bg-white w-full max-w-sm rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-              <div className="bg-indigo-600 px-6 py-4 flex justify-between items-center text-white">
-                <h3 className="font-black text-sm">新增自訂商品</h3>
-                <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-lg transition-colors"><X size={20}/></button>
+            {item.weeklySales > item.consignmentTotal && (
+              <div className="mt-2 flex items-center gap-1 text-rose-500 bg-rose-50 p-1.5 rounded-lg">
+                <AlertCircle size={10} />
+                <span className="text-[9px] font-bold">銷量超過寄賣總數，請核對！</span>
               </div>
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase ml-1">分類</label>
-                  <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-100" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})}>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase ml-1">商品名稱</label>
-                  <input type="text" placeholder="輸入名稱..." className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-100" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">進貨批價</label>
-                    <input type="number" placeholder="0" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-100" value={formData.wholesalePrice} onChange={(e) => setFormData({...formData, wholesalePrice: e.target.value})} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">零售價</label>
-                    <input type="number" placeholder="0" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-100" value={formData.retailPrice} onChange={(e) => setFormData({...formData, retailPrice: e.target.value})} />
-                  </div>
-                </div>
-                <button type="submit" className="w-full bg-indigo-600 text-white font-black py-3 rounded-2xl shadow-lg shadow-indigo-100 active:scale-95 transition-all mt-2">完成新增</button>
-              </form>
-            </div>
+            )}
           </div>
         );
       };
+
+      const NavBtn = ({ active, onClick, icon, label }) => (
+        <button onClick={onClick} className={`flex flex-col items-center gap-1 transition-all ${active ? 'text-indigo-600 scale-110' : 'text-slate-300'}`}>
+          {icon}
+          <span className="text-[9px] font-black tracking-tighter">{label}</span>
+        </button>
+      );
 
       const App = () => {
         const [inventory, setInventory] = useState([]);
         const [searchQuery, setSearchQuery] = useState('');
         const [selectedCategory, setSelectedCategory] = useState('全部');
         const [activeTab, setActiveTab] = useState('inventory');
-        const [isAddModalOpen, setIsAddModalOpen] = useState(false);
         const [reportInfo, setReportInfo] = useState({
           date: new Date().toISOString().split('T')[0],
           companyName: ''
         });
 
+        // 版本更新至 v16
         useEffect(() => {
-          const saved = localStorage.getItem('pet-consign-v10');
+          const saved = localStorage.getItem('pet-consign-v16');
           if (saved) setInventory(JSON.parse(saved));
           else setInventory(INITIAL_PRODUCTS.map(p => ({ ...p, consignmentTotal: 0, weeklySales: 0 })));
-          const savedInfo = localStorage.getItem('pet-consign-info-v10');
+          const savedInfo = localStorage.getItem('pet-consign-info-v16');
           if (savedInfo) setReportInfo(JSON.parse(savedInfo));
         }, []);
 
         useEffect(() => {
-          if (inventory.length > 0) localStorage.setItem('pet-consign-v10', JSON.stringify(inventory));
+          if (inventory.length > 0) localStorage.setItem('pet-consign-v16', JSON.stringify(inventory));
         }, [inventory]);
 
         useEffect(() => {
-          localStorage.setItem('pet-consign-info-v10', JSON.stringify(reportInfo));
+          localStorage.setItem('pet-consign-info-v16', JSON.stringify(reportInfo));
         }, [reportInfo]);
 
         const updateItem = (id, field, delta, directValue) => {
@@ -372,10 +233,6 @@
             }
             return item;
           }));
-        };
-
-        const addProduct = (product) => {
-          setInventory(prev => [product, ...prev]);
         };
 
         const stats = useMemo(() => {
@@ -395,7 +252,7 @@
         }, [inventory]);
 
         const analyticsData = useMemo(() => {
-          return ['風乾零食', '凍乾零食', '用品'].map(cat => {
+          return CATEGORIES.map(cat => {
             const catItems = inventory.filter(i => i.category === cat);
             const revenue = catItems.reduce((s, i) => s + (i.weeklySales * i.retailPrice), 0);
             const soldCount = catItems.reduce((s, i) => s + i.weeklySales, 0);
@@ -413,7 +270,7 @@
         }, [inventory, searchQuery, selectedCategory]);
 
         const handleReset = () => {
-          if (window.confirm('執行週結算？\n「剩餘數量」將設為下週的「寄賣總數」，並清空銷量紀錄。')) {
+          if (window.confirm('執行週結算？\n「剩餘庫存」將自動轉為下週的「寄賣總數」，並歸零銷量。')) {
             setInventory(prev => prev.map(item => ({
               ...item,
               consignmentTotal: Math.max(0, item.consignmentTotal - item.weeklySales),
@@ -423,24 +280,24 @@
         };
 
         const exportToExcel = () => {
-          if (!reportInfo.companyName) return alert('請填寫公司名稱！');
+          if (!reportInfo.companyName) return alert('請先填寫公司名稱！');
           let csv = "\uFEFF報表日期," + reportInfo.date + ",公司名稱," + reportInfo.companyName + "\n\n";
-          ['風乾零食', '凍乾零食', '用品'].forEach(cat => {
-            csv += cat + "庫存表\n分類,品名,批價,零售價,寄賣數,週銷量,剩餘庫存,應收批價小計\n";
-            let sub = 0;
+          CATEGORIES.forEach(cat => {
+            csv += cat + "庫存明細\n分類,品名,零售價,批價(60%),寄賣數,週銷量,剩餘庫存,應付廠商小計(銷量*批價)\n";
+            let subWholesale = 0;
             inventory.filter(i => i.category === cat).forEach(item => {
               const rem = Math.max(0, item.consignmentTotal - item.weeklySales);
               const val = item.weeklySales * item.wholesalePrice;
-              sub += val;
-              csv += `${item.category},${item.name},${item.wholesalePrice},${item.retailPrice},${item.consignmentTotal},${item.weeklySales},${rem},${val}\n`;
+              subWholesale += val;
+              csv += `${item.category},${item.name},${item.retailPrice},${item.wholesalePrice},${item.consignmentTotal},${item.weeklySales},${rem},${val}\n`;
             });
-            csv += `,,,小計,,,,${sub}\n\n`;
+            csv += `,,,,,,,分類小計,${subWholesale}\n\n`;
           });
-          csv += `\n結算總結\n總銷額 (零售),${stats.totalRevenue},廠商應繳總批價,${stats.totalWholesaleRevenue},預計利潤,${stats.totalProfit},場內庫存價值,${stats.totalStockValue}\n`;
+          csv += `\n結算統計\n總零售額,${stats.totalRevenue},廠商應收總額,${stats.totalWholesaleRevenue},店家利潤預估,${stats.totalProfit},場內賸餘貨物總值,${stats.totalStockValue}\n`;
           const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
           const link = document.createElement("a");
           link.href = URL.createObjectURL(blob);
-          link.download = `${reportInfo.companyName}_報表_${reportInfo.date}.csv`;
+          link.download = `${reportInfo.companyName}_寄賣結算_${reportInfo.date}.csv`;
           link.click();
         };
 
@@ -451,24 +308,23 @@
                 <div className="flex justify-between items-center mb-6">
                   <h1 className="text-xl font-black text-slate-900 flex items-center gap-2"><Package className="text-indigo-600" size={26} /> PetConsign <span className="text-indigo-600">Pro</span></h1>
                   <div className="flex gap-2">
-                    <button onClick={() => setIsAddModalOpen(true)} className="p-2.5 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center gap-1 active:scale-90 transition-all border border-indigo-100"><PlusCircle size={18} /> <span className="text-xs font-bold">新增</span></button>
-                    <button onClick={exportToExcel} className="p-2.5 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center gap-1 active:scale-90 transition-all"><FileSpreadsheet size={18} /> <span className="text-xs font-bold">匯出</span></button>
-                    <button onClick={handleReset} className="p-2.5 bg-indigo-50 text-indigo-600 rounded-2xl active:scale-90 transition-all"><RotateCcw size={18} /></button>
+                    <button onClick={exportToExcel} className="p-2.5 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center gap-1 active:scale-90 transition-all border border-emerald-100"><FileSpreadsheet size={18} /> <span className="text-xs font-bold uppercase">匯出 CSV</span></button>
+                    <button onClick={handleReset} className="p-2.5 bg-indigo-50 text-indigo-600 rounded-2xl active:scale-90 transition-all border border-indigo-100 flex items-center gap-1"><RotateCcw size={18} /> <span className="text-xs font-bold uppercase">結算</span></button>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">報表日期</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">結算日期</label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                       <input type="date" className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-100" value={reportInfo.date} onChange={(e)=>setReportInfo({...reportInfo, date: e.target.value})}/>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">公司名稱</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">寄賣點 / 公司</label>
                     <div className="relative">
                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
-                      <input type="text" placeholder="輸入名稱" className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-100" value={reportInfo.companyName} onChange={(e)=>setReportInfo({...reportInfo, companyName: e.target.value})}/>
+                      <input type="text" placeholder="輸入寄賣單位名稱" className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-100" value={reportInfo.companyName} onChange={(e)=>setReportInfo({...reportInfo, companyName: e.target.value})}/>
                     </div>
                   </div>
                 </div>
@@ -476,7 +332,7 @@
                   <div className="space-y-4">
                     <div className="relative">
                       <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                      <input type="text" placeholder="搜尋商品名稱..." className="w-full pl-11 pr-4 py-3 bg-slate-100 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/10" value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} />
+                      <input type="text" placeholder="快速搜尋品項..." className="w-full pl-11 pr-4 py-3 bg-slate-100 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/10" value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} />
                     </div>
                     <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
                       {['全部', ...CATEGORIES].map(cat => (
@@ -489,9 +345,9 @@
               {activeTab === 'inventory' && (
                 <div className="sticky-stats px-4 py-3 border-b border-slate-200 shadow-sm">
                   <div className="grid grid-cols-3 gap-2">
-                    <QuickStat label="總零售額" value={`$${stats.totalRevenue.toLocaleString()}`} color="text-slate-600" />
-                    <QuickStat label="總批價(應付)" value={`$${stats.totalWholesaleRevenue.toLocaleString()}`} color="text-indigo-600" />
-                    <QuickStat label="預估利潤" value={`$${stats.totalProfit.toLocaleString()}`} color="text-emerald-600" />
+                    <QuickStat label="總零售 (週)" value={`$${stats.totalRevenue.toLocaleString()}`} color="text-slate-600" />
+                    <QuickStat label="總批價 (應付)" value={`$${stats.totalWholesaleRevenue.toLocaleString()}`} color="text-indigo-600" />
+                    <QuickStat label="店家利潤" value={`$${stats.totalProfit.toLocaleString()}`} color="text-emerald-600" />
                   </div>
                 </div>
               )}
@@ -499,14 +355,19 @@
                 {activeTab === 'inventory' ? (
                   <div className="space-y-3 pb-24">
                     {filteredInventory.map(item => <CompactProductCard key={item.id} item={item} onUpdate={updateItem} />)}
-                    {filteredInventory.length === 0 && <div className="text-center py-24 opacity-20"><Box size={48} className="mx-auto text-slate-400" /><p className="text-sm font-black mt-2">查無商品</p></div>}
+                    {filteredInventory.length === 0 && (
+                      <div className="text-center py-24 opacity-20">
+                        <Box size={48} className="mx-auto text-slate-400" />
+                        <p className="text-sm font-black mt-2">未找到符合條件的商品</p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-6 pb-28">
                     <div className="bg-white p-6 rounded-[32px] shadow-sm border border-slate-100">
                       <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-sm font-black flex items-center gap-2 text-slate-800"><BarChart3 size={18} className="text-indigo-600" />各大項營收佔比</h3>
-                        <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-black tracking-wider">零售額</span>
+                        <h3 className="text-sm font-black flex items-center gap-2 text-slate-800"><BarChart3 size={18} className="text-indigo-600" />各大項營收概況</h3>
+                        <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-black tracking-wider uppercase">零售營業額</span>
                       </div>
                       <div className="h-64 relative">
                         <ResponsiveContainer width="100%" height="100%">
@@ -523,19 +384,19 @@
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <h3 className="text-sm font-black px-2 flex items-center gap-2 text-slate-800"><TrendingUp size={18} className="text-indigo-600" />大項內的細項表現</h3>
+                      <h3 className="text-sm font-black px-2 flex items-center gap-2 text-slate-800 uppercase"><TrendingUp size={18} className="text-indigo-600" />Top 銷售排行 (件數)</h3>
                       {analyticsData.map((catData, idx) => (
-                        <div key={catData.name} className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-sm overflow-hidden relative group">
+                        <div key={catData.name} className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-sm overflow-hidden relative">
                           <div className="flex justify-between items-end mb-6">
                              <div className="flex flex-col">
                                <div className="flex items-center gap-2 mb-1">
                                  <div className="w-3 h-3 rounded-full" style={{backgroundColor: CHART_COLORS[idx]}} />
                                  <span className="text-sm font-black text-slate-800 uppercase tracking-wide">{catData.name}</span>
                                </div>
-                               <p className="text-[10px] font-bold text-slate-400">本週共銷售 {catData.soldCount} 件商品</p>
+                               <p className="text-[10px] font-bold text-slate-400">本週共銷售 {catData.soldCount} 件</p>
                              </div>
                              <div className="text-right">
-                               <p className="text-[9px] font-black text-slate-300 uppercase leading-none">應付總批價</p>
+                               <p className="text-[9px] font-black text-slate-300 uppercase leading-none">廠商應收小計</p>
                                <p className="text-sm font-black text-indigo-600">${catData.revenue.toLocaleString()}</p>
                              </div>
                           </div>
@@ -548,33 +409,33 @@
                                      <span className="text-[11px] font-bold text-slate-700 truncate">{item.name}</span>
                                    </div>
                                    <div className="text-right ml-3 shrink-0">
-                                     <span className="text-[11px] font-black text-slate-800">{item.weeklySales} 件</span>
+                                     <span className="text-[11px] font-black text-slate-800">{item.weeklySales} 份</span>
                                    </div>
                                 </div>
                                 <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
                                    <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${catData.soldCount ? (item.weeklySales / catData.soldCount) * 100 : 0}%`, backgroundColor: CHART_COLORS[idx], opacity: 0.8 - (i * 0.15)}} />
                                 </div>
                               </div>
-                            )) : <div className="text-center py-8"><div className="text-[10px] text-slate-300 font-bold bg-slate-50 inline-block px-4 py-2 rounded-xl italic">本週暫無銷售數據</div></div>}
+                            )) : <div className="text-center py-6 text-[10px] text-slate-300 font-bold bg-slate-50 rounded-xl italic">本週暫無銷售記錄</div>}
                           </div>
                         </div>
                       ))}
                     </div>
                     <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-[32px] p-8 text-white shadow-xl shadow-indigo-100 relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
-                      <div className="flex items-center gap-2 mb-6 relative z-10"><div className="p-2 bg-white/10 rounded-xl backdrop-blur-md"><Award size={22} className="text-white" /></div><h3 className="text-base font-black tracking-tight">應結算總表</h3></div>
+                      <div className="flex items-center gap-2 mb-6 relative z-10"><div className="p-2 bg-white/10 rounded-xl backdrop-blur-md"><Award size={22} className="text-white" /></div><h3 className="text-base font-black tracking-tight">結算總摘要</h3></div>
                       <div className="space-y-4 relative z-10">
                         <div className="flex justify-between items-center border-b border-white/10 pb-4">
-                          <span className="text-xs font-bold text-white/60">應結算總批價 (廠商應付款)</span>
+                          <span className="text-xs font-bold text-white/60 uppercase">總廠商應收 (按 60% 批價)</span>
                           <span className="text-2xl font-black tabular-nums">${stats.totalWholesaleRevenue.toLocaleString()}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
-                            <p className="text-[10px] font-bold text-white/50 mb-1">場內剩餘貨值</p>
+                            <p className="text-[10px] font-bold text-white/50 mb-1 uppercase tracking-wider">賸餘貨值 (批價計)</p>
                             <p className="text-xs font-black">${stats.totalStockValue.toLocaleString()}</p>
                           </div>
                           <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
-                            <p className="text-[10px] font-bold text-white/50 mb-1">預估利潤</p>
+                            <p className="text-[10px] font-bold text-white/50 mb-1 uppercase tracking-wider">預估總利潤</p>
                             <p className="text-xs font-black text-emerald-300">${stats.totalProfit.toLocaleString()}</p>
                           </div>
                         </div>
@@ -584,10 +445,9 @@
                 )}
               </div>
             </main>
-            <AddProductModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onAdd={addProduct} />
             <nav className="bg-white border-t border-slate-200 safe-bottom px-10 py-4 flex justify-around items-center z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
-              <NavBtn active={activeTab === 'inventory'} onClick={()=>setActiveTab('inventory')} icon={<Package size={24} strokeWidth={activeTab === 'inventory' ? 2.5 : 2} />} label="庫存管理" />
-              <NavBtn active={activeTab === 'analytics'} onClick={()=>setActiveTab('analytics')} icon={<BarChart3 size={24} strokeWidth={activeTab === 'analytics' ? 2.5 : 2} />} label="數據分析" />
+              <NavBtn active={activeTab === 'inventory'} onClick={()=>setActiveTab('inventory')} icon={<Package size={24} strokeWidth={activeTab === 'inventory' ? 2.5 : 2} />} label="清單結算" />
+              <NavBtn active={activeTab === 'analytics'} onClick={()=>setActiveTab('analytics')} icon={<BarChart3 size={24} strokeWidth={activeTab === 'analytics' ? 2.5 : 2} />} label="數據概覽" />
             </nav>
           </div>
         );
