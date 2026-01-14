@@ -490,7 +490,7 @@
                 <div className="sticky-stats px-4 py-3 border-b border-slate-200 shadow-sm">
                   <div className="grid grid-cols-3 gap-2">
                     <QuickStat label="總零售額" value={`$${stats.totalRevenue.toLocaleString()}`} color="text-slate-600" />
-                    <QuickStat label="總批價(應收)" value={`$${stats.totalWholesaleRevenue.toLocaleString()}`} color="text-indigo-600" />
+                    <QuickStat label="總批價(應付)" value={`$${stats.totalWholesaleRevenue.toLocaleString()}`} color="text-indigo-600" />
                     <QuickStat label="預估利潤" value={`$${stats.totalProfit.toLocaleString()}`} color="text-emerald-600" />
                   </div>
                 </div>
@@ -535,7 +535,7 @@
                                <p className="text-[10px] font-bold text-slate-400">本週共銷售 {catData.soldCount} 件商品</p>
                              </div>
                              <div className="text-right">
-                               <p className="text-[9px] font-black text-slate-300 uppercase leading-none">應收總批價</p>
+                               <p className="text-[9px] font-black text-slate-300 uppercase leading-none">應付總批價</p>
                                <p className="text-sm font-black text-indigo-600">${catData.revenue.toLocaleString()}</p>
                              </div>
                           </div>
@@ -565,7 +565,7 @@
                       <div className="flex items-center gap-2 mb-6 relative z-10"><div className="p-2 bg-white/10 rounded-xl backdrop-blur-md"><Award size={22} className="text-white" /></div><h3 className="text-base font-black tracking-tight">應結算總表</h3></div>
                       <div className="space-y-4 relative z-10">
                         <div className="flex justify-between items-center border-b border-white/10 pb-4">
-                          <span className="text-xs font-bold text-white/60">應結算總批價 (廠商應收款)</span>
+                          <span className="text-xs font-bold text-white/60">應結算總批價 (廠商應付款)</span>
                           <span className="text-2xl font-black tabular-nums">${stats.totalWholesaleRevenue.toLocaleString()}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
